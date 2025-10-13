@@ -26,5 +26,11 @@ public class Main {
         //Print room prices:
         System.out.println("\nAverage room price in Panel 1: " + panel1.roomprice() + " Ft");
         System.out.println("Average room price in Panel 2: " + panel2.roomprice() + " Ft");
+
+        // Load from file
+        RealEstateAgent.loadFromFile("realestates.txt");
+
+        // Print and save outputs
+        RealEstateAgent.printAndSaveResults("outputRealEstate.txt");
     }
 }

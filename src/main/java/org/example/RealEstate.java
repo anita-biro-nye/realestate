@@ -64,16 +64,33 @@ public class RealEstate implements PropertyInterface{
 
     @Override
     public int getTotalPrice() {
-        return 0;
+        double basePrice = price * sqm;
+        if (city.equalsIgnoreCase("Budapest")) {
+            basePrice *= 1.3;
+        } else if (city.equalsIgnoreCase("Debrecen")) {
+            basePrice *= 1.2;
+        } else if (city.equalsIgnoreCase("Nyíregyháza")) {
+            basePrice *= 1.15;
+        }
+        return (int) Math.round(basePrice);
     }
 
     @Override
     public double averageSqmPerRoom() {
-        return 0.0;
+        if (numberOfRooms == 0) return 0;
+        return (double) sqm / numberOfRooms;
     }
 
     @Override
     public String toString() {
-        return "RealEstate { " + "city: " + city + "\n" + "price: " + price + "\n" + "sqm: " + sqm + "\n" + "numberOfRooms: " + numberOfRooms + "\n" + "genre: " + genre + " }";
+        return "RealEstate { " +
+                "city='" + city + '\'' +
+                ", price=" + price +
+                ", sqm=" + sqm +
+                ", numberOfRooms=" + numberOfRooms +
+                ", genre=" + genre +
+                ", totalPrice=" + getTotalPrice() +
+                ", sqm/room=" + String.format("%.2f", averageSqmPerRoom()) +
+                " }";
     }
 }
