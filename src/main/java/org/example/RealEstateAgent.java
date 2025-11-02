@@ -2,11 +2,18 @@ package org.example;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 
 public class RealEstateAgent {
-    private static TreeSet<RealEstate> properties = new TreeSet<>(Comparator.comparingInt(RealEstate::getTotalPrice));
+
+    private static final Logger logger = LoggerConfig.getLogger();
+
+    private static TreeSet<RealEstate> properties =
+            new TreeSet<>(Comparator.comparingInt(RealEstate::getTotalPrice));
 
     public static void loadFromFile(String filename) {
+        logger.info("Entering loadFromFile() with filename: " + filename);
+
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -26,12 +33,18 @@ public class RealEstateAgent {
                     properties.add(new RealEstate(city, price, sqm, numberOfRooms, genre));
                 }
             }
+
+            logger.info("Successfully loaded properties from file: " + filename);
         } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
+            logger.log(Level.SEVERE, "Error reading file: " + filename, e);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Unexpected error while loading from file", e);
         }
     }
 
     public static void printAndSaveResults(String outputFilename) {
+        logger.info("Entering printAndSaveResults() with filename: " + outputFilename);
+
         try (PrintWriter writer = new PrintWriter(new FileWriter(outputFilename))) {
             double totalSqmPrice = 0;
             int totalProperties = 0;
@@ -63,8 +76,8 @@ public class RealEstateAgent {
             writer.println("Average square meter value per room of the most expensive apartment in Budapest: " +
                     (mostExpensiveBudapest != null ? mostExpensiveBudapest.averageSqmPerRoom() : "N/A"));
             writer.println("Total price of all properties: " + totalPriceAll);
+            writer.println("\nCondominium properties under average total price:");
 
-            writer.println("Condominium properties under average total price:");
             for (RealEstate re : properties) {
                 if (re.getGenre() == Genre.CONDOMINIUM && re.getTotalPrice() <= averageTotalPrice) {
                     writer.println(re);
@@ -73,12 +86,14 @@ public class RealEstateAgent {
 
             writer.flush();
             System.out.println("Results written to " + outputFilename);
+            logger.info("Successfully wrote results to file: " + outputFilename);
         } catch (IOException e) {
-            System.out.println("Error writing output: " + e.getMessage());
+            logger.log(Level.SEVERE, "Error writing output file: " + outputFilename, e);
         }
     }
 
     public static TreeSet<RealEstate> getProperties() {
+        logger.info("Accessing property collection");
         return properties;
     }
 }
